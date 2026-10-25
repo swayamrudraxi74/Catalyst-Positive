@@ -10,6 +10,10 @@ permissions:
   pages: write
   id-token: write
 
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -20,12 +24,18 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
 
       - name: Install and Build
+        env:
+          VITE_BASE_PATH: /${{ github.event.repository.name }}/
         run: |
-          npm install
-          npx vite build --base=/${{ github.event.repository.name }}/
+          rm -rf node_modules package-lock.json bun.lock
+          npm install --legacy-peer-deps --no-package-lock
+          npm run build
 
       - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
@@ -33,4 +43,5 @@ jobs:
           path: ./dist
 
       - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4

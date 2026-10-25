@@ -43,6 +43,8 @@ export interface CookieCategory {
   cookiesList: string;
 }
 
+const BASE_URL = import.meta.env.BASE_URL || '/';
+
 export const SCRAPED_SITE_CONTENT = {
   siteTitle: 'Catalyst Positive',
   tagline: 'In search of Talent',
@@ -53,9 +55,9 @@ export const SCRAPED_SITE_CONTENT = {
   contactPhoneFormatted: '+91 94810 61014',
   contactEmail: 'contact@catalystpositive.com',
   whatsappNumber: '919481061014',
-  heroImage: '/assets/Catalyst-Positive-Logo-2026-1024x683.jpg',
-  heroImageHiRes: '/assets/Catalyst-Positive-Logo-2026.jpg',
-  squareLogo: '/assets/Catalyst_Positive_Logo_512x512-300x300.png',
+  heroImage: `${BASE_URL}assets/Catalyst-Positive-Logo-2026-1024x683.jpg`,
+  heroImageHiRes: `${BASE_URL}assets/Catalyst-Positive-Logo-2026.jpg`,
+  squareLogo: `${BASE_URL}assets/Catalyst_Positive_Logo_512x512-300x300.png`,
 };
 
 export const TESTIMONIALS: TestimonialItem[] = [
