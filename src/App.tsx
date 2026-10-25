@@ -62,7 +62,7 @@ export default function App() {
         <div className="wp-block-cover is-light has-contrast-color has-text-color">
           <div className="wp-block-cover__inner-container">
             {/* Hero Image Block — Centered 560px Constrained Width */}
-            <ScrollReveal delayMs={50} distancePx={18} className="w-full">
+            <ScrollReveal delayMs={40} distancePx={14} className="w-full">
               <figure className="wp-block-image size-large w-full max-w-[560px] mx-auto mb-0">
                 {!imageLoadFailed ? (
                   <img
@@ -97,148 +97,152 @@ export default function App() {
               {/* Main Content Column — Centered & Properly Spaced Below the Logo */}
               <main
                 id="wp--skip-link--target"
-                className="wp-block-group wp-main-container is-layout-constrained"
+                className="wp-block-group wp-main-container"
               >
-                {/* Core Value Proposition Heading — Centered Directly Beneath the Logo */}
-                <ScrollReveal delayMs={100} distancePx={26} className="w-full">
-                  <h2
-                    className="wp-block-heading text-center w-full max-w-[820px] mx-auto px-4"
-                    style={{ textWrap: 'balance' }}
-                  >
-                    <strong>{SCRAPED_SITE_CONTENT.heroHeading}</strong>
-                  </h2>
+                {/* Core Value Proposition Heading — Centered & Aligned Directly Beneath the Hero Image */}
+                <ScrollReveal delayMs={80} distancePx={18} className="w-full">
+                  <div className="w-full max-w-[660px] mx-auto px-4 sm:px-0 mt-1 mb-0">
+                    <h2
+                      className="wp-block-heading text-center w-full mx-auto"
+                      style={{ textWrap: 'balance' }}
+                    >
+                      <strong>{SCRAPED_SITE_CONTENT.heroHeading}</strong>
+                    </h2>
+                  </div>
                 </ScrollReveal>
 
-                {/* Verbatim ".." Divider & Fluid Section Spacing */}
-                <ScrollReveal delayMs={160} distancePx={20} className="w-full">
-                  <div className="wp-block-group wp-section-block w-full max-w-[680px] mx-auto text-center">
+                {/* Verbatim ".." Divider between Hero Heading and Testimonials */}
+                <ScrollReveal delayMs={110} distancePx={14} className="w-full">
+                  <div className="wp-section-block text-center">
                     <p className="text-center wp-block-paragraph">..</p>
                   </div>
                 </ScrollReveal>
 
-                {/* Testimonials & FAQ's Section — Centered Along the Vertical Axis */}
-                <div className="wp-section-block w-full max-w-[680px] mx-auto px-4 sm:px-0">
-                  <ScrollReveal delayMs={100} distancePx={26} className="w-full">
+                {/* Testimonials Section — Normalized .wp-section-block */}
+                <div className="wp-section-block px-4 sm:px-0">
+                  <ScrollReveal delayMs={90} distancePx={18} className="w-full">
                     <h1
                       id="testimonials"
-                      className="wp-block-heading text-center w-full mx-auto mb-12"
+                      className="wp-block-heading text-center w-full mx-auto mb-6"
                     >
                       <strong>Testimonials</strong>
                     </h1>
                   </ScrollReveal>
 
-                  {/* Testimonials & FAQ's Flow Group using fluid .is-layout-flow */}
-                  <div className="wp-block-group w-full mx-auto is-layout-flow">
+                  {/* Testimonials Block */}
+                  <div className="w-full mx-auto space-y-6">
                     {TESTIMONIALS.map((item, idx) => (
                       <ScrollReveal
                         key={item.id}
-                        delayMs={120 + idx * 140}
-                        distancePx={24}
+                        delayMs={100 + idx * 100}
+                        distancePx={18}
                         className="w-full"
                       >
                         <p className="wp-block-paragraph text-left">
                           <strong>{item.quote}</strong>
                           <br />
-                          <strong className="inline-block mt-2">
+                          <strong className="inline-block mt-1">
                             {item.authorRole}
                           </strong>
                         </p>
                       </ScrollReveal>
                     ))}
-
-                    {/* Verbatim ".." Divider before FAQ's */}
-                    <ScrollReveal delayMs={100} distancePx={16} className="w-full">
-                      <div className="py-4 text-center">
-                        <p className="text-center wp-block-paragraph">..</p>
-                      </div>
-                    </ScrollReveal>
-
-                    {/* FAQ's Heading */}
-                    <ScrollReveal delayMs={120} distancePx={22} className="w-full">
-                      <p
-                        id="faqs"
-                        className="text-center wp-block-paragraph text-lg"
-                      >
-                        <strong>FAQ’s</strong>
-                      </p>
-                    </ScrollReveal>
-
-                    {/* FAQ Items — Generous Fluid Block Gap & IntersectionObserver Reveal */}
-                    <div className="is-layout-flow w-full">
-                      {FAQS.map((faq, idx) => {
-                        const isCollapsed = !!collapsedFaqs[faq.id];
-                        return (
-                          <ScrollReveal
-                            key={faq.id}
-                            delayMs={100 + idx * 110}
-                            distancePx={24}
-                            className="w-full"
-                          >
-                            <div className="wp-faq-pair text-left">
-                              {/* Question Paragraph (Clickable for smooth expand/collapse) */}
-                              <p
-                                onClick={() => toggleFaq(faq.id)}
-                                role="button"
-                                tabIndex={0}
-                                onKeyDown={(e) => {
-                                  if (e.key === 'Enter' || e.key === ' ') {
-                                    e.preventDefault();
-                                    toggleFaq(faq.id);
-                                  }
-                                }}
-                                aria-expanded={!isCollapsed}
-                                className="wp-block-paragraph cursor-pointer hover:opacity-85 transition-opacity select-none"
-                                title="Click to toggle answer"
-                              >
-                                <strong>{faq.question}</strong>
-                              </p>
-
-                              {/* Answer Paragraph */}
-                              <div
-                                className={`overflow-hidden transition-all duration-400 ease-out ${
-                                  isCollapsed
-                                    ? 'max-h-0 opacity-0'
-                                    : 'max-h-[450px] opacity-100'
-                                }`}
-                              >
-                                {faq.hasCompetencyLink ? (
-                                  <p className="wp-block-paragraph">
-                                    <strong>
-                                      We do{' '}
-                                      <a
-                                        href="#competency-mapping"
-                                        onClick={(e) => {
-                                          e.preventDefault();
-                                          setLightboxTarget('img2');
-                                        }}
-                                        className="underline hover:no-underline cursor-pointer"
-                                      >
-                                        Competency mapping
-                                      </a>
-                                      , candidate undergoes a structured evaluation
-                                      based on skills, experience, communication,
-                                      cultural fit, leadership potential, and
-                                      role-specific requirements before being
-                                      presented to our clients.
-                                    </strong>
-                                  </p>
-                                ) : (
-                                  <p className="wp-block-paragraph">
-                                    <strong>{faq.answer}</strong>
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-                          </ScrollReveal>
-                        );
-                      })}
-                    </div>
                   </div>
                 </div>
 
-                {/* Let's Connect Button & Collapsible Local DB Drawer */}
-                <ScrollReveal delayMs={150} distancePx={24} className="w-full">
-                  <div className="wp-section-block w-full">
+                {/* Verbatim ".." Divider between Testimonials and FAQ's */}
+                <ScrollReveal delayMs={100} distancePx={14} className="w-full">
+                  <div className="wp-section-block text-center">
+                    <p className="text-center wp-block-paragraph">..</p>
+                  </div>
+                </ScrollReveal>
+
+                {/* FAQ's Section — Normalized .wp-section-block */}
+                <div className="wp-section-block px-4 sm:px-0">
+                  <ScrollReveal delayMs={110} distancePx={16} className="w-full">
+                    <p
+                      id="faqs"
+                      className="text-center wp-block-paragraph mb-6"
+                    >
+                      <strong>FAQ’s</strong>
+                    </p>
+                  </ScrollReveal>
+
+                  {/* FAQ Items — Clean Proportional Spacing Between Pairs */}
+                  <div className="w-full space-y-6">
+                    {FAQS.map((faq, idx) => {
+                      const isCollapsed = !!collapsedFaqs[faq.id];
+                      return (
+                        <ScrollReveal
+                          key={faq.id}
+                          delayMs={90 + idx * 90}
+                          distancePx={18}
+                          className="w-full"
+                        >
+                          <div className="wp-faq-pair text-left">
+                            {/* Question Paragraph (Clickable for smooth expand/collapse) */}
+                            <p
+                              onClick={() => toggleFaq(faq.id)}
+                              role="button"
+                              tabIndex={0}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                  e.preventDefault();
+                                  toggleFaq(faq.id);
+                                }
+                              }}
+                              aria-expanded={!isCollapsed}
+                              className="wp-block-paragraph cursor-pointer hover:opacity-85 transition-opacity select-none"
+                              title="Click to toggle answer"
+                            >
+                              <strong>{faq.question}</strong>
+                            </p>
+
+                            {/* Answer Paragraph */}
+                            <div
+                              className={`overflow-hidden transition-all duration-300 ease-out ${
+                                isCollapsed
+                                  ? 'max-h-0 opacity-0'
+                                  : 'max-h-[450px] opacity-100'
+                              }`}
+                            >
+                              {faq.hasCompetencyLink ? (
+                                <p className="wp-block-paragraph">
+                                  <strong>
+                                    We do{' '}
+                                    <a
+                                      href="#competency-mapping"
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        setLightboxTarget('img2');
+                                      }}
+                                      className="underline hover:no-underline cursor-pointer"
+                                    >
+                                      Competency mapping
+                                    </a>
+                                    , candidate undergoes a structured evaluation
+                                    based on skills, experience, communication,
+                                    cultural fit, leadership potential, and
+                                    role-specific requirements before being
+                                    presented to our clients.
+                                  </strong>
+                                </p>
+                              ) : (
+                                <p className="wp-block-paragraph">
+                                  <strong>{faq.answer}</strong>
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </ScrollReveal>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Let's Connect Button & Collapsible Local DB Drawer — Normalized .wp-section-block */}
+                <ScrollReveal delayMs={120} distancePx={18} className="w-full">
+                  <div className="wp-section-block">
                     <LetsConnectSection
                       prefilledMandate={prefilledMandate}
                       forceOpenForm={forceConnectOpen}
@@ -249,23 +253,12 @@ export default function App() {
                 </ScrollReveal>
               </main>
 
-              {/* Exact WordPress Footer Template Part */}
-              <ScrollReveal delayMs={120} distancePx={20} className="w-full">
-                <footer className="wp-block-template-part w-full">
-                  <div
-                    style={{ height: 'var(--wp--preset--spacing--80)' }}
-                    aria-hidden="true"
-                    className="wp-block-spacer"
-                  />
-                  <div className="wp-block-group w-full max-w-[680px] mx-auto px-4">
-                    <div
-                      className="wp-block-group is-layout-flow text-center"
-                      style={{
-                        paddingTop: 'var(--wp--preset--spacing--60)',
-                        paddingBottom: 'var(--wp--preset--spacing--60)',
-                      }}
-                    >
-                      <h1 className="text-center wp-block-site-title mx-auto">
+              {/* Exact WordPress Footer Template Part — Dead-Center Aligned */}
+              <ScrollReveal delayMs={100} distancePx={16} className="w-full">
+                <footer className="wp-block-template-part w-full mt-8">
+                  <div className="wp-block-group w-full max-w-[660px] mx-auto px-4">
+                    <div className="wp-footer-stack flex flex-col items-center justify-center text-center py-6">
+                      <h1 className="wp-block-site-title m-0">
                         <a
                           href="#top"
                           onClick={(e) => {
@@ -279,10 +272,10 @@ export default function App() {
                       </h1>
 
                       <nav
-                        className="flex justify-center wp-block-navigation"
+                        className="flex justify-center items-center wp-block-navigation"
                         aria-label="Navigation"
                       >
-                        <ul className="flex justify-center list-none m-0 p-0">
+                        <ul className="flex justify-center items-center list-none m-0 p-0">
                           <li className="wp-block-navigation-item">
                             <a
                               className="wp-block-navigation-item__content hover:underline"
@@ -300,8 +293,8 @@ export default function App() {
                         </ul>
                       </nav>
 
-                      <ul className="flex justify-center list-none m-0 p-0">
-                        <li className="text-white">
+                      <ul className="flex justify-center items-center list-none m-0 p-0">
+                        <li className="text-white flex items-center justify-center">
                           <a
                             href="#lets-connect"
                             onClick={(e) => {
@@ -312,8 +305,8 @@ export default function App() {
                             aria-label="X"
                           >
                             <svg
-                              width="24"
-                              height="24"
+                              width="22"
+                              height="22"
                               viewBox="0 0 24 24"
                               version="1.1"
                               xmlns="http://www.w3.org/2000/svg"
@@ -328,7 +321,10 @@ export default function App() {
                         </li>
                       </ul>
 
-                      <p className="text-center wp-block-paragraph">
+                      <p
+                        className="text-center wp-block-paragraph m-0"
+                        style={{ paddingLeft: '0.04rem' }}
+                      >
                         <strong>{SCRAPED_SITE_CONTENT.location}</strong>
                       </p>
                     </div>
@@ -348,7 +344,7 @@ export default function App() {
         onSelectMandateCTA={() => scrollToConnect('estimator')}
       />
 
-      {/* Local-Database Chat Bot Modal (Opened by the "Chat Bot" button down below) */}
+      {/* Local-Database & Wikipedia Chat Bot Modal */}
       <TalentAdvisorChat
         isOpen={chatBotOpen}
         onToggle={(open) => setChatBotOpen(open)}

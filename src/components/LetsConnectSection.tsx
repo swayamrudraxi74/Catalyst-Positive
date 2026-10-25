@@ -207,7 +207,7 @@ export const LetsConnectSection: React.FC<LetsConnectSectionProps> = ({
   };
 
   return (
-    <div id="lets-connect" className="w-full mt-8">
+    <div id="lets-connect" className="w-full">
       {/* Bottom Action Button: Centered "Let's Connect" */}
       <div className="wp-block-buttons alignfull flex justify-center items-center">
         <div className="wp-block-button">

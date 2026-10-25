@@ -343,36 +343,68 @@ export function matchCatalystFaqOrKnowledge(
   const q = clean.toLowerCase();
   const userTurnCount = history.filter((m) => m.role === 'user').length;
 
-  // Let explicit factual/definition queries go to Wikipedia
-  if (
-    /^(wikipedia|wiki)\s*[:\-]/i.test(clean) ||
-    /^(what\s+is|who\s+is|define|definition\s+of)\s+/i.test(clean)
-  ) {
+  // Let explicit "Wikipedia:" / "Wiki:" queries go directly to Wikipedia
+  if (/^(wikipedia|wiki)\s*[:\-]/i.test(clean)) {
     return null;
+  }
+
+  // Exact FAQ 1: "What types of positions do you recruit for?"
+  if (
+    q.includes('what types of positions do you recruit') ||
+    (q.includes('position') && q.includes('recruit')) ||
+    (q.includes('types of') && (q.includes('role') || q.includes('position')))
+  ) {
+    return FAQS[0].answer;
+  }
+
+  // Exact FAQ 2: "How long does it take to fill a position?"
+  if (
+    q.includes('how long does it take to fill') ||
+    q.includes('search timelines') ||
+    (q.includes('how long') && (q.includes('fill') || q.includes('position') || q.includes('hire')))
+  ) {
+    return FAQS[1].answer;
+  }
+
+  // Exact FAQ 3: "How do you ensure candidate quality ?"
+  if (
+    q.includes('how do you ensure candidate quality') ||
+    q.includes('candidate quality') ||
+    q.includes('ensure quality')
+  ) {
+    return FAQS[2].answer;
+  }
+
+  // Exact FAQ 4: "Do you recruit across India and internationally?, Do you help with confidential hiring assignments ?"
+  if (
+    q.includes('do you recruit across india and internationally') ||
+    q.includes('do you help with confidential hiring assignments') ||
+    q.includes('pan-india') ||
+    q.includes('internationally') ||
+    q.includes('confidential hiring') ||
+    q.includes('confidential')
+  ) {
+    return FAQS[3].answer;
   }
 
   // Quick-Select Tile 1: Executive Search
   if (
     q.includes('executive search & c-suite recruitment') ||
-    q.includes('executive search') ||
+    (q.includes('executive search') && !q.startsWith('what is')) ||
     q.includes('c-suite')
   ) {
-    const cxo = ROLE_TIERS[0];
-    const vp = ROLE_TIERS[1];
-    return `Our Executive Search practice partners with Boards, Founders, and HR Leaders to recruit transformative leaders:\n\n• ${cxo.label}: ${cxo.examples} (${cxo.shortlistDaysPanIndia} Pan-India)\n• ${vp.label}: ${vp.examples} (${vp.shortlistDaysPanIndia} Pan-India)\n\nEvery leadership search includes market mapping, confidential outreach, and 6-pillar Competency Mapping. Which leadership role are you planning to hire?`;
+    return `${FAQS[0].answer}\n\n• ${ROLE_TIERS[0].label}: ${ROLE_TIERS[0].examples}\n• ${ROLE_TIERS[1].label}: ${ROLE_TIERS[1].examples}`;
   }
 
-  // Quick-Select Tile 2: Competency Mapping & FAQ 3 (Candidate Quality)
+  // Quick-Select Tile 2: Competency Mapping
   if (
-    q.includes('how do you ensure candidate quality') ||
     q.includes('6-pillar competency mapping') ||
-    q.includes('competency mapping') ||
-    q.includes('candidate quality')
+    (q.includes('competency mapping') && !q.startsWith('what is'))
   ) {
     const pillarsList = COMPETENCY_PILLARS.map(
       (p) => `• ${p.name}: ${p.description}`
     ).join('\n');
-    return `${FAQS[2].answer}\n\nOur 6 Evaluation Pillars:\n${pillarsList}`;
+    return `${FAQS[2].answer}\n\n${pillarsList}`;
   }
 
   // Quick-Select Tile 3: Career Inquiry
@@ -384,72 +416,41 @@ export function matchCatalystFaqOrKnowledge(
     q.includes('my cv') ||
     q.includes('apply')
   ) {
-    return `We welcome Career Inquiries from professionals and executives across India and internationally!\n\n• Share your CV / Resume: ${ENV_CONFIG.contactEmail}\n• Direct WhatsApp / Phone: +91 94810 61014\n• You can also tell me your current role, experience, and target industry right here in the chat.`;
-  }
-
-  // FAQ 1: Positions Recruited
-  if (
-    q.includes('what types of positions do you recruit') ||
-    (q.includes('position') && q.includes('recruit')) ||
-    (q.includes('types of') && (q.includes('role') || q.includes('position')))
-  ) {
-    return `${FAQS[0].answer}\n\nWhich role tier or domain are you looking to hire for?`;
-  }
-
-  // FAQ 2: Time to Fill / Search Timelines
-  if (
-    q.includes('how long does it take to fill') ||
-    q.includes('search timelines') ||
-    (q.includes('how long') && (q.includes('fill') || q.includes('position') || q.includes('hire')))
-  ) {
-    const tierTimelines = ROLE_TIERS.map(
-      (t) => `• ${t.label}: ${t.shortlistDaysPanIndia} (Pan-India) | ${t.shortlistDaysInternational} (Global)`
-    ).join('\n');
-    return `${FAQS[1].answer}\n\nEstimated Shortlist Delivery Windows:\n${tierTimelines}`;
-  }
-
-  // FAQ 4: Pan-India & International
-  if (
-    q.includes('do you recruit across india and internationally') ||
-    q.includes('pan-india') ||
-    q.includes('internationally')
-  ) {
-    return `${FAQS[3].answer}\n\nWhich location or region is your hiring focused on?`;
-  }
-
-  // FAQ 5: Confidential Hiring
-  if (q.includes('confidential') || q.includes('discretion')) {
-    return `Yes. We manage confidential recruitment projects for strategic and leadership positions while maintaining complete discretion throughout the hiring process—using NDA-protected outreach and blind market mapping until you approve a shortlist.`;
+    return `We welcome Career Inquiries from professionals and executives across India and internationally.\n\n• Email your CV / Resume: ${ENV_CONFIG.contactEmail}\n• Direct WhatsApp / Phone: +91 94810 61014`;
   }
 
   // Testimonials
   if (q.includes('testimonial') || q.includes('what do clients say') || q.includes('reviews')) {
-    const quotes = TESTIMONIALS.map(
-      (t) => `${t.quote}\n${t.authorRole} (${t.focusTag})`
-    ).join('\n\n');
-    return `Client Testimonials:\n\n${quotes}`;
+    return TESTIMONIALS.map((t) => `${t.quote}\n${t.authorRole}`).join('\n\n');
+  }
+
+  // About Catalyst Positive
+  if (q.includes('catalyst positive') || q.includes('who are you') || q.includes('what do you do')) {
+    return `We are in the business of finding the right Talent, to drive Your Organization Forward.\n\n${FAQS[0].answer}\n\n${FAQS[3].answer}`;
   }
 
   // Greetings
   if (/^(hi+|hello+|hey+|hola|namaste|good\s*(morning|afternoon|evening)|greetings)[\s!.,?]*$/i.test(clean)) {
     const greetings = [
-      'Hi there! Welcome to Catalyst Positive. You can tap any of the quick-select tiles below (like Executive Search, Competency Mapping, or Career Inquiry), pick an FAQ from the dropdown, or ask me any factual or company question.',
-      'Hello! Great to connect with you. How can I assist you with your talent search, career inquiry, or company lookup today?',
+      'Hi there! Welcome to Catalyst Positive — "In search of Talent". You can select any quick topic or FAQ below, or ask me any question!',
+      'Hello! Great to connect with you. How can I assist you with your talent search, FAQ question, or Wikipedia lookup today?',
     ];
     return greetings[userTurnCount % greetings.length];
   }
 
   if (q.includes('how are you') || q.includes('how is it going')) {
-    return "I'm doing great, thank you! Ready to help with executive search questions, our 6-pillar Competency Mapping, career inquiries, or live Wikipedia definitions. How can I help you today?";
+    return "I'm doing great, thank you! Ready to help with our FAQs, executive search, competency mapping, career inquiries, or live Wikipedia definitions. How can I help you today?";
   }
 
   if (
     q.includes('contact') ||
     q.includes('email') ||
     q.includes('phone') ||
-    q.includes('whatsapp')
+    q.includes('whatsapp') ||
+    q.includes('location') ||
+    q.includes('where are you based')
   ) {
-    return `Direct Contact Channels:\n• Email: ${ENV_CONFIG.contactEmail}\n• Phone / WhatsApp: +91 94810 61014\n• Or use the "Let’s Connect" inquiry form on this page.`;
+    return `Catalyst Positive is based in India and supports hiring pan-India and internationally.\n\n• Email: ${ENV_CONFIG.contactEmail}\n• Phone / WhatsApp: +91 94810 61014`;
   }
 
   return null;
